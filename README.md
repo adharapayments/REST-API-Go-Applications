@@ -14,7 +14,7 @@ The repository contains the wrapper and all the example listed above together wi
 **2. Modify conf.json file with your settings** 
 
 ```
-"domain" : "http://demo.arthikatrading.com"
+"domain" : "http://actfx.adhara.io"
 "user" : "demo"
 "password" : "demo"
 ```
@@ -23,7 +23,9 @@ The repository contains the wrapper and all the example listed above together wi
 
 From here on we will assume it is getPriceStreaming.
 ```
-id1 := wrapper.GetPriceStreamingBegin(secs, nil, wrapper.GRANULARITY_FAB, 5, conf.Interval, processPrices)
+var w *wrapper.Wrapper
+w = wrapper.CreateWrapper(...)
+id1 := w.GetPriceStreamingBegin(secs, nil, wrapper.GRANULARITY_FAB, 5, conf.Interval, processPrices)
 ```
 
 **4. Run example.**
