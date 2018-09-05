@@ -53,72 +53,91 @@ var ssl_cert string
 var transport *http.Transport
 var insecureSkipVerify bool
 
-type CallBackPriceFunc func(prices []PriceTick)
-
-type CallBackPositionFunc func(position PositionTick)
-
-type CallBackOrderFunc func(position []OrderTick)
-
-type GetAuthorizationChallengeRequest struct {
-	GetAuthorizationChallenge ChallengeRequest `json:"getAuthorizationChallenge"`
+type Wrapper struct {
+	domain              string
+	user                string
+	password            string
+	url_streaming       string
+	url_polling         string
+	url_challenge       string
+	url_token           string
+	authentication_port int
+	request_port        int
+	challenge           string
+	challengeresp       string
+	token               string
+	ssl                 bool
+	ssl_cert            string
+	transport           *http.Transport
+	insecureSkipVerify  bool
 }
 
-type GetAuthorizationTokenRequest struct {
-	GetAuthorizationToken TokenRequest `json:"getAuthorizationToken"`
+type callBackPriceFunc func(prices []PriceTick)
+
+type callBackPositionFunc func(position PositionTick)
+
+type callBackOrderFunc func(position []OrderTick)
+
+type getAuthorizationChallengeRequest struct {
+	GetAuthorizationChallenge challengeRequest `json:"getAuthorizationChallenge"`
 }
 
-type GetAccountRequest struct {
-	GetAccount AccountRequest `json:"getAccount"`
+type getAuthorizationTokenRequest struct {
+	GetAuthorizationToken tokenRequest `json:"getAuthorizationToken"`
 }
 
-type GetInterfaceRequest struct {
-	GetInterface InterfaceRequest `json:"getInterface"`
+type getAccountRequest struct {
+	GetAccount accountRequest `json:"getAccount"`
 }
 
-type GetPriceRequest struct {
-	GetPrice PriceRequest `json:"getPrice"`
+type getInterfaceRequest struct {
+	GetInterface interfaceRequest `json:"getInterface"`
 }
 
-type GetPositionRequest struct {
-	GetPosition PositionRequest `json:"getPosition"`
+type getPriceRequest struct {
+	GetPrice priceRequest `json:"getPrice"`
 }
 
-type GetOrderRequest struct {
-	GetOrder OrderRequest `json:"getOrder"`
+type getPositionRequest struct {
+	GetPosition positionRequest `json:"getPosition"`
 }
 
-type SetOrderRequest struct {
-	SetOrder SetOrderRequest2 `json:"setOrder"`
+type getOrderRequest struct {
+	GetOrder orderRequest `json:"getOrder"`
 }
 
-type ModifyOrderRequest struct {
-	ModifyOrder ModifyOrderRequest2 `json:"modifyOrder"`
+type setOrderRequest struct {
+	SetOrder setOrderRequest2 `json:"setOrder"`
 }
 
-type CancelOrderRequest struct {
-	CancelOrder CancelOrderRequest2 `json:"cancelOrder"`
+type modifyOrderRequest struct {
+	ModifyOrder modifyOrderRequest2 `json:"modifyOrder"`
 }
 
-type ChallengeRequest struct {
+type cancelOrderRequest struct {
+	CancelOrder cancelOrderRequest2 `json:"cancelOrder"`
+}
+
+type challengeRequest struct {
 	User string `json:"user"`
 }
 
-type TokenRequest struct {
+type tokenRequest struct {
 	User          string `json:"user"`
 	Challengeresp string `json:"challengeresp"`
 }
 
-type AccountRequest struct {
+type accountRequest struct {
 	User  string `json:"user"`
 	Token string `json:"token"`
 }
 
-type InterfaceRequest struct {
+type interfaceRequest struct {
 	User  string `json:"user"`
 	Token string `json:"token"`
 }
 
-type PriceRequest struct {
+type priceRequest struct {
 	User        string   `json:"user"`
 	Token       string   `json:"token"`
 	Security    []string `json:"security"`
@@ -128,7 +147,7 @@ type PriceRequest struct {
 	Interval    int      `json:"interval"`
 }
 
-type PositionRequest struct {
+type positionRequest struct {
 	User     string   `json:"user"`
 	Token    string   `json:"token"`
 	Asset    []string `json:"asset"`
@@ -137,7 +156,7 @@ type PositionRequest struct {
 	Interval int      `json:"interval"`
 }
 
-type OrderRequest struct {
+type orderRequest struct {
 	User       string   `json:"user"`
 	Token      string   `json:"token"`
 	Security   []string `json:"security"`
@@ -146,7 +165,7 @@ type OrderRequest struct {
 	Interval   int      `json:"interval"`
 }
 
-type SetOrderRequest2 struct {
+type setOrderRequest2 struct {
 	User  string  `json:"user"`
 	Token string  `json:"token"`
 	Order []Order `json:"order"`
@@ -166,7 +185,7 @@ type Order struct {
 	Result      string  `json:"result"`
 }
 
-type ModifyOrderRequest2 struct {
+type modifyOrderRequest2 struct {
 	User  string     `json:"user"`
 	Token string     `json:"token"`
 	Order []ModOrder `json:"order"`
@@ -178,63 +197,63 @@ type ModOrder struct {
 	Quantity int     `json:"quantity"`
 }
 
-type CancelOrderRequest2 struct {
+type cancelOrderRequest2 struct {
 	User  string   `json:"user"`
 	Token string   `json:"token"`
 	Fixid []string `json:"fixid"`
 }
 
-type GetAuthorizationChallengeResponse struct {
-	GetAuthorizationChallengeResponse ChallengeResponse `json:"getAuthorizationChallengeResponse"`
+type getAuthorizationChallengeResponse struct {
+	GetAuthorizationChallengeResponse challengeResponse `json:"getAuthorizationChallengeResponse"`
 }
 
-type GetAuthorizationTokenResponse struct {
-	GetAuthorizationTokenResponse TokenResponse `json:"getAuthorizationTokenResponse"`
+type getAuthorizationTokenResponse struct {
+	GetAuthorizationTokenResponse tokenResponse `json:"getAuthorizationTokenResponse"`
 }
 
-type GetAccountResponse struct {
-	GetAccountResponse AccountResponse `json:"getAccountResponse"`
+type getAccountResponse struct {
+	GetAccountResponse accountResponse `json:"getAccountResponse"`
 }
 
-type GetInterfaceResponse struct {
-	GetInterfaceResponse InterfaceResponse `json:"getInterfaceResponse"`
+type getInterfaceResponse struct {
+	GetInterfaceResponse interfaceResponse `json:"getInterfaceResponse"`
 }
 
-type GetPriceResponse struct {
-	GetPriceResponse PriceResponse `json:"getPriceResponse"`
+type getPriceResponse struct {
+	GetPriceResponse priceResponse `json:"getPriceResponse"`
 }
 
-type GetPositionResponse struct {
+type getPositionResponse struct {
 	GetPositionResponse PositionTick `json:"getPositionResponse"`
 }
 
-type GetOrderResponse struct {
-	GetOrderResponse OrderResponse `json:"getOrderResponse"`
+type getOrderResponse struct {
+	GetOrderResponse orderResponse `json:"getOrderResponse"`
 }
 
-type SetOrderResponse struct {
+type setOrderResponse struct {
 	SetOrderResponse SetOrderResponse2 `json:"setOrderResponse"`
 }
 
-type ModifyOrderResponse struct {
+type modifyOrderResponse struct {
 	ModifyOrderResponse ModifyOrderResponse2 `json:"modifyOrderResponse"`
 }
 
-type CancelOrderResponse struct {
+type cancelOrderResponse struct {
 	CancelOrderResponse CancelOrderResponse2 `json:"cancelOrderResponse"`
 }
 
-type ChallengeResponse struct {
+type challengeResponse struct {
 	Challenge string `json:"challenge"`
 	Timestamp string `json:"timestamp"`
 }
 
-type TokenResponse struct {
+type tokenResponse struct {
 	Token     string `json:"token"`
 	Timestamp string `json:"timestamp"`
 }
 
-type AccountResponse struct {
+type accountResponse struct {
 	Account   []AccountTick `json:"account"`
 	Timestamp string        `json:"timestamp"`
 }
@@ -248,7 +267,7 @@ type AccountTick struct {
 	Settlement  string `json:"settlement"`
 }
 
-type InterfaceResponse struct {
+type interfaceResponse struct {
 	Tinterface []TinterfaceTick `json:"tinterface"`
 	Timestamp  string           `json:"timestamp"`
 }
@@ -260,7 +279,7 @@ type TinterfaceTick struct {
 	Commissions string `json:"commissions"`
 }
 
-type PriceResponse struct {
+type priceResponse struct {
 	Tick      []PriceTick `json:"tick"`
 	Timestamp string      `json:"timestamp"`
 }
@@ -307,7 +326,7 @@ type SecurityPositionTick struct {
 	Pl       float64 `json:"pl"`
 }
 
-type OrderResponse struct {
+type orderResponse struct {
 	Order     []OrderTick `json:"order"`
 	Timestamp string      `json:"timestamp"`
 }
@@ -368,44 +387,47 @@ type CancelOrderTick struct {
 	Result string `json:"result"`
 }
 
-func New(d string, u string, p string, u_streaming string, u_polling string, u_challenge string, u_token string, a_port int, r_port int, is_ssl bool, sslcert string, ver bool) {
-	domain = d
-	user = u
-	password = p
-	url_streaming = u_streaming
-	url_polling = u_polling
-	url_challenge = u_challenge
-	url_token = u_token
-	authentication_port = a_port
-	request_port = r_port
-	ssl = is_ssl
-	ssl_cert = sslcert
-	insecureSkipVerify = ver
+func CreateWrapper(d string, u string, p string, u_streaming string, u_polling string, u_challenge string, u_token string, a_port int, r_port int, is_ssl bool, sslcert string, ver bool) (*Wrapper){
+	wrapper := &Wrapper{
+		domain              : d,
+		user                : u,
+		password            : p,
+		url_streaming       : u_streaming,
+		url_polling         : u_polling,
+		url_challenge       : u_challenge,
+		url_token           : u_token,
+		authentication_port : a_port,
+		request_port        : r_port,
+		ssl                 : is_ssl,
+		ssl_cert            : sslcert,
+		insecureSkipVerify  : ver,
+	}
+	return wrapper
 }
 
-func DoAuthentication() (err error) {
+func (w *Wrapper) DoAuthentication() (err error) {
 	if ssl {
-		err = getSSlCert()
+		err = w.getSSlCert()
 		if err != nil {
 			return
 		}
 	}
-	err = getChallenge()
+	err = w.getChallenge()
 	if err != nil {
 		return
 	}
-	err = getChallengeResponse()
+	err = w.getChallengeResponse()
 	if err != nil {
 		return
 	}
-	err = getToken()
+	err = w.getToken()
 	if err != nil {
 		return
 	}
 	return
 }
 
-func getSSlCert() (err error) {
+func (w *Wrapper) getSSlCert() (err error) {
 	// Load CA cert
 	//caCert, err := ioutil.ReadFile("gsalphasha2g2r1.crt")
 	client := &http.Client{}
@@ -428,17 +450,17 @@ func getSSlCert() (err error) {
 	}
 	tlsConfig.BuildNameToCertificate()
 	// Patched by Julio
-	transport = &http.Transport{TLSClientConfig: tlsConfig}
+	w.transport = &http.Transport{TLSClientConfig: tlsConfig}
 	return
 }
 
-func getChallenge() (err error) {
-	url := domain + ":" + strconv.Itoa(authentication_port) + url_challenge
+func (w *Wrapper) getChallenge() (err error) {
+	url := w.domain + ":" + strconv.Itoa(w.authentication_port) + w.url_challenge
 	//fmt.Println("URL:>", url)
-	u := ChallengeRequest{
-		User: user,
+	u := challengeRequest{
+		User: w.user,
 	}
-	reqJ := GetAuthorizationChallengeRequest{
+	reqJ := getAuthorizationChallengeRequest{
 		GetAuthorizationChallenge: u,
 	}
 	bytes, thiserr := polling(reqJ, url)
@@ -446,40 +468,40 @@ func getChallenge() (err error) {
 		err = thiserr
 		return
 	}
-	var cresponse GetAuthorizationChallengeResponse
+	var cresponse getAuthorizationChallengeResponse
 	err = json.Unmarshal(bytes, &cresponse)
 	if err != nil {
 		return
 	}
-	challenge = cresponse.GetAuthorizationChallengeResponse.Challenge
-	fmt.Println("CHALLENGE: " + challenge)
+	w.challenge = cresponse.GetAuthorizationChallengeResponse.Challenge
+	//fmt.Println("CHALLENGE: " + w.challenge)
 	return
 }
 
-func getChallengeResponse() (err error) {
-	a, thiserr := hex.DecodeString(challenge)
+func (w *Wrapper) getChallengeResponse() (err error) {
+	a, thiserr := hex.DecodeString(w.challenge)
 	if thiserr != nil {
 		err = thiserr
 		return
 	}
-	b := []byte(password)
+	b := []byte(w.password)
 	c := append(a, b...)
 	h := sha1.New()
 	h.Write(c)
 	bs := h.Sum(nil)
-	challengeresp = fmt.Sprintf("%x", bs)
-	fmt.Println("CHALLENGERESP: " + challengeresp)
+	w.challengeresp = fmt.Sprintf("%x", bs)
+	//fmt.Println("CHALLENGERESP: " + w.challengeresp)
 	return
 }
 
-func getToken() (err error) {
-	url := domain + ":" + strconv.Itoa(authentication_port) + url_token
+func (w *Wrapper) getToken() (err error) {
+	url := w.domain + ":" + strconv.Itoa(w.authentication_port) + w.url_token
 	//fmt.Println("URL:>", url)
-	u := TokenRequest{
-		User:          user,
-		Challengeresp: challengeresp,
+	u := tokenRequest{
+		User:          w.user,
+		Challengeresp: w.challengeresp,
 	}
-	reqJ := GetAuthorizationTokenRequest{
+	reqJ := getAuthorizationTokenRequest{
 		GetAuthorizationToken: u,
 	}
 	bytes, thiserr := polling(reqJ, url)
@@ -487,24 +509,24 @@ func getToken() (err error) {
 		err = thiserr
 		return
 	}
-	var cresponse GetAuthorizationTokenResponse
+	var cresponse getAuthorizationTokenResponse
 	err = json.Unmarshal(bytes, &cresponse)
 	if err != nil {
 		return
 	}
-	token = cresponse.GetAuthorizationTokenResponse.Token
-	fmt.Println("TOKEN: " + token)
+	w.token = cresponse.GetAuthorizationTokenResponse.Token
+	fmt.Println("TOKEN: " + w.token)
 	return
 }
 
-func GetAccount() (acs []AccountTick, err error) {
-	url := domain + ":" + strconv.Itoa(request_port) + url_polling + "/getAccount"
+func (w *Wrapper) GetAccount() (acs []AccountTick, err error) {
+	url := w.domain + ":" + strconv.Itoa(w.request_port) + w.url_polling + "/getAccount"
 	//fmt.Println("URL:>", url)
-	u := AccountRequest{
-		User:  user,
-		Token: token,
+	u := accountRequest{
+		User:  w.user,
+		Token: w.token,
 	}
-	reqJ := GetAccountRequest{
+	reqJ := getAccountRequest{
 		GetAccount: u,
 	}
 	bytes, thiserr := polling(reqJ, url)
@@ -512,7 +534,7 @@ func GetAccount() (acs []AccountTick, err error) {
 		err = thiserr
 		return
 	}
-	var cresponse GetAccountResponse
+	var cresponse getAccountResponse
 	err = json.Unmarshal(bytes, &cresponse)
 	if err != nil {
 		return
@@ -521,14 +543,14 @@ func GetAccount() (acs []AccountTick, err error) {
 	return
 }
 
-func GetInterface() (tis []TinterfaceTick, err error) {
-	url := domain + ":" + strconv.Itoa(request_port) + url_polling + "/getInterface"
+func (w *Wrapper) GetInterface() (tis []TinterfaceTick, err error) {
+	url := w.domain + ":" + strconv.Itoa(w.request_port) + w.url_polling + "/getInterface"
 	//fmt.Println("URL:>", url)
-	u := InterfaceRequest{
-		User:  user,
-		Token: token,
+	u := interfaceRequest{
+		User:  w.user,
+		Token: w.token,
 	}
-	reqJ := GetInterfaceRequest{
+	reqJ := getInterfaceRequest{
 		GetInterface: u,
 	}
 	bytes, thiserr := polling(reqJ, url)
@@ -536,7 +558,7 @@ func GetInterface() (tis []TinterfaceTick, err error) {
 		err = thiserr
 		return
 	}
-	var cresponse GetInterfaceResponse
+	var cresponse getInterfaceResponse
 	err = json.Unmarshal(bytes, &cresponse)
 	if err != nil {
 		return
@@ -545,19 +567,19 @@ func GetInterface() (tis []TinterfaceTick, err error) {
 	return
 }
 
-func GetPricePolling(secs []string, tis []string, gran string, lev int) (prices []PriceTick, err error) {
-	url := domain + ":" + strconv.Itoa(request_port) + url_polling + "/getPrice"
+func (w *Wrapper) GetPricePolling(secs []string, tis []string, gran string, lev int) (prices []PriceTick, err error) {
+	url := w.domain + ":" + strconv.Itoa(w.request_port) + w.url_polling + "/getPrice"
 	//fmt.Println("URL:>", url)
-	u := PriceRequest{
-		User:        user,
-		Token:       token,
+	u := priceRequest{
+		User:        w.user,
+		Token:       w.token,
 		Security:    secs,
 		Tinterface:  tis,
 		Granularity: gran,
 		Levels:      lev,
 		Interval:    0,
 	}
-	reqJ := GetPriceRequest{
+	reqJ := getPriceRequest{
 		GetPrice: u,
 	}
 	bytes, thiserr := polling(reqJ, url)
@@ -565,7 +587,7 @@ func GetPricePolling(secs []string, tis []string, gran string, lev int) (prices 
 		err = thiserr
 		return
 	}
-	var cresponse GetPriceResponse
+	var cresponse getPriceResponse
 	err = json.Unmarshal(bytes, &cresponse)
 	if err != nil {
 		return
@@ -574,46 +596,51 @@ func GetPricePolling(secs []string, tis []string, gran string, lev int) (prices 
 	return
 }
 
-func GetPositionPolling(asts []string, secs []string, accs []string) (position PositionTick, err error) {
-	url := domain + ":" + strconv.Itoa(request_port) + url_polling + "/getPosition"
+func (w *Wrapper) GetPositionPolling(asts []string, secs []string, accs []string) (position PositionTick, err error) {
+	url := w.domain + ":" + strconv.Itoa(w.request_port) + w.url_polling + "/getPosition"
 	//fmt.Println("URL:>", url)
-	u := PositionRequest{
-		User:     user,
-		Token:    token,
+	u := positionRequest{
+		User:     w.user,
+		Token:    w.token,
 		Asset:    asts,
 		Security: secs,
 		Account:  accs,
 		Interval: 0,
 	}
-	reqJ := GetPositionRequest{
+	reqJ := getPositionRequest{
 		GetPosition: u,
 	}
 	bytes, thiserr := polling(reqJ, url)
 	if thiserr != nil {
+		fmt.Println("GetPositionPolling u:>", u)
+		fmt.Println(thiserr)
 		err = thiserr
 		return
 	}
-	var cresponse GetPositionResponse
+	var cresponse getPositionResponse
 	err = json.Unmarshal(bytes, &cresponse)
 	if err != nil {
+		fmt.Println("GetPositionPolling u2:>", u)
+		fmt.Println("GetPositionPolling response:>", bytes)
+		fmt.Println(err)
 		return
 	}
 	position = cresponse.GetPositionResponse
 	return
 }
 
-func GetOrderPolling(secs []string, tis []string, tys []string) (orders []OrderTick, err error) {
-	url := domain + ":" + strconv.Itoa(request_port) + url_polling + "/getOrder"
+func (w *Wrapper) GetOrderPolling(secs []string, tis []string, tys []string) (orders []OrderTick, err error) {
+	url := w.domain + ":" + strconv.Itoa(w.request_port) + w.url_polling + "/getOrder"
 	//fmt.Println("URL:>", url)
-	u := OrderRequest{
-		User:       user,
-		Token:      token,
+	u := orderRequest{
+		User:       w.user,
+		Token:      w.token,
 		Security:   secs,
 		Tinterface: tis,
 		Type:       tys,
 		Interval:   0,
 	}
-	reqJ := GetOrderRequest{
+	reqJ := getOrderRequest{
 		GetOrder: u,
 	}
 	bytes, thiserr := polling(reqJ, url)
@@ -621,7 +648,7 @@ func GetOrderPolling(secs []string, tis []string, tys []string) (orders []OrderT
 		err = thiserr
 		return
 	}
-	var cresponse GetOrderResponse
+	var cresponse getOrderResponse
 	err = json.Unmarshal(bytes, &cresponse)
 	if err != nil {
 		return
@@ -630,15 +657,15 @@ func GetOrderPolling(secs []string, tis []string, tys []string) (orders []OrderT
 	return
 }
 
-func SetOrder(orders []Order) (ordresp SetOrderResponse2, err error) {
-	url := domain + ":" + strconv.Itoa(request_port) + url_polling + "/setOrder"
+func (w *Wrapper) SetOrder(orders []Order) (ordresp SetOrderResponse2, err error) {
+	url := w.domain + ":" + strconv.Itoa(w.request_port) + w.url_polling + "/setOrder"
 	//fmt.Println("URL:>", url)
-	u := SetOrderRequest2{
-		User:  user,
-		Token: token,
+	u := setOrderRequest2{
+		User:  w.user,
+		Token: w.token,
 		Order: orders,
 	}
-	reqJ := SetOrderRequest{
+	reqJ := setOrderRequest{
 		SetOrder: u,
 	}
 	bytes, thiserr := polling(reqJ, url)
@@ -646,7 +673,7 @@ func SetOrder(orders []Order) (ordresp SetOrderResponse2, err error) {
 		err = thiserr
 		return
 	}
-	var cresponse SetOrderResponse
+	var cresponse setOrderResponse
 	err = json.Unmarshal(bytes, &cresponse)
 	if err != nil {
 		return
@@ -655,15 +682,15 @@ func SetOrder(orders []Order) (ordresp SetOrderResponse2, err error) {
 	return
 }
 
-func ModifyOrder(modifyorders []ModOrder) (modresp ModifyOrderResponse2, err error) {
-	url := domain + ":" + strconv.Itoa(request_port) + url_polling + "/modifyOrder"
+func (w *Wrapper) ModifyOrder(modifyorders []ModOrder) (modresp ModifyOrderResponse2, err error) {
+	url := w.domain + ":" + strconv.Itoa(w.request_port) + w.url_polling + "/modifyOrder"
 	//fmt.Println("URL:>", url)
-	u := ModifyOrderRequest2{
-		User:  user,
-		Token: token,
+	u := modifyOrderRequest2{
+		User:  w.user,
+		Token: w.token,
 		Order: modifyorders,
 	}
-	reqJ := ModifyOrderRequest{
+	reqJ := modifyOrderRequest{
 		ModifyOrder: u,
 	}
 	bytes, thiserr := polling(reqJ, url)
@@ -671,7 +698,7 @@ func ModifyOrder(modifyorders []ModOrder) (modresp ModifyOrderResponse2, err err
 		err = thiserr
 		return
 	}
-	var cresponse ModifyOrderResponse
+	var cresponse modifyOrderResponse
 	err = json.Unmarshal(bytes, &cresponse)
 	if err != nil {
 		return
@@ -680,15 +707,15 @@ func ModifyOrder(modifyorders []ModOrder) (modresp ModifyOrderResponse2, err err
 	return
 }
 
-func CancelOrder(cancelorders []string) (canresp CancelOrderResponse2, err error) {
-	url := domain + ":" + strconv.Itoa(request_port) + url_polling + "/cancelOrder"
+func (w *Wrapper) CancelOrder(cancelorders []string) (canresp CancelOrderResponse2, err error) {
+	url := w.domain + ":" + strconv.Itoa(w.request_port) + w.url_polling + "/cancelOrder"
 	//fmt.Println("URL:>", url)
-	u := CancelOrderRequest2{
-		User:  user,
-		Token: token,
+	u := cancelOrderRequest2{
+		User:  w.user,
+		Token: w.token,
 		Fixid: cancelorders,
 	}
-	reqJ := CancelOrderRequest{
+	reqJ := cancelOrderRequest{
 		CancelOrder: u,
 	}
 	bytes, thiserr := polling(reqJ, url)
@@ -696,7 +723,7 @@ func CancelOrder(cancelorders []string) (canresp CancelOrderResponse2, err error
 		err = thiserr
 		return
 	}
-	var cresponse CancelOrderResponse
+	var cresponse cancelOrderResponse
 	err = json.Unmarshal(bytes, &cresponse)
 	if err != nil {
 		return
@@ -705,21 +732,23 @@ func CancelOrder(cancelorders []string) (canresp CancelOrderResponse2, err error
 	return
 }
 
-func GetPriceStreaming(secs []string, tis []string, gran string, lev int, inter int, callback CallBackPriceFunc, quit chan bool) (err error) {
-	url := domain + ":" + strconv.Itoa(request_port) + url_streaming + "/getPrice"
+func (w *Wrapper) GetPriceStreaming(secs []string, tis []string, gran string, lev int, inter int, callback callBackPriceFunc, quit chan bool) (err error) {
+	url := w.domain + ":" + strconv.Itoa(w.request_port) + w.url_streaming + "/getPrice"
 	//fmt.Println("URL:>", url)
-	u := PriceRequest{
-		User:        user,
-		Token:       token,
+	u := priceRequest{
+		User:        w.user,
+		Token:       w.token,
 		Security:    secs,
 		Tinterface:  tis,
 		Granularity: gran,
 		Levels:      lev,
 		Interval:    inter,
 	}
-	reqJ := GetPriceRequest{
+	reqJ := getPriceRequest{
 		GetPrice: u,
 	}
+	//fmt.Println(token)
+	//fmt.Println(u)
 	reader, thiserr := streaming(reqJ, url)
 	if thiserr != nil {
 		err = thiserr
@@ -739,7 +768,7 @@ func GetPriceStreaming(secs []string, tis []string, gran string, lev int, inter 
 			}
 			//fmt.Println(string(line))
 			bytes := []byte(line)
-			var cresponse GetPriceResponse
+			var cresponse getPriceResponse
 			err = json.Unmarshal(bytes, &cresponse)
 			if err != nil {
 				return err
@@ -751,30 +780,30 @@ func GetPriceStreaming(secs []string, tis []string, gran string, lev int, inter 
 	}
 }
 
-func GetPriceStreamingBegin(secs []string, tis []string, gran string, lev int, inter int, callback CallBackPriceFunc) (quit chan bool, err error) {
+func (w *Wrapper) GetPriceStreamingBegin(secs []string, tis []string, gran string, lev int, inter int, callback callBackPriceFunc) (quit chan bool, err error) {
 	quit = make(chan bool)
 	go func() {
-		err = GetPriceStreaming(secs, tis, gran, lev, inter, callback, quit)
+		err = w.GetPriceStreaming(secs, tis, gran, lev, inter, callback, quit)
 	}()
 	return
 }
 
-func GetPriceStreamingEnd(quit chan bool) {
+func (w *Wrapper) GetPriceStreamingEnd(quit chan bool) {
 	quit <- true
 }
 
-func GetPositionStreaming(asts []string, secs []string, accs []string, inter int, callback CallBackPositionFunc, quit chan bool) (err error) {
-	url := domain + ":" + strconv.Itoa(request_port) + url_streaming + "/getPosition"
+func (w *Wrapper) GetPositionStreaming(asts []string, secs []string, accs []string, inter int, callback callBackPositionFunc, quit chan bool) (err error) {
+	url := w.domain + ":" + strconv.Itoa(w.request_port) + w.url_streaming + "/getPosition"
 	//fmt.Println("URL:>", url)
-	u := PositionRequest{
-		User:     user,
-		Token:    token,
+	u := positionRequest{
+		User:     w.user,
+		Token:    w.token,
 		Asset:    asts,
 		Security: secs,
 		Account:  accs,
 		Interval: inter,
 	}
-	reqJ := GetPositionRequest{
+	reqJ := getPositionRequest{
 		GetPosition: u,
 	}
 	reader, thiserr := streaming(reqJ, url)
@@ -796,7 +825,7 @@ func GetPositionStreaming(asts []string, secs []string, accs []string, inter int
 			}
 			//fmt.Println(string(line))
 			bytes := []byte(line)
-			var cresponse GetPositionResponse
+			var cresponse getPositionResponse
 			err = json.Unmarshal(bytes, &cresponse)
 			if err != nil {
 				return err
@@ -808,28 +837,28 @@ func GetPositionStreaming(asts []string, secs []string, accs []string, inter int
 	}
 }
 
-func GetPositionStreamingBegin(asts []string, secs []string, accs []string, inter int, callback CallBackPositionFunc) chan bool {
+func (w *Wrapper) GetPositionStreamingBegin(asts []string, secs []string, accs []string, inter int, callback callBackPositionFunc) chan bool {
 	quit := make(chan bool)
-	go GetPositionStreaming(asts, secs, accs, inter, callback, quit)
+	go w.GetPositionStreaming(asts, secs, accs, inter, callback, quit)
 	return quit
 }
 
-func GetPositionStreamingEnd(quit chan bool) {
+func (w *Wrapper) GetPositionStreamingEnd(quit chan bool) {
 	quit <- true
 }
 
-func GetOrderStreaming(secs []string, tis []string, tys []string, inter int, callback CallBackOrderFunc, quit chan bool) (err error) {
-	url := domain + ":" + strconv.Itoa(request_port) + url_streaming + "/getOrder"
+func (w *Wrapper) GetOrderStreaming(secs []string, tis []string, tys []string, inter int, callback callBackOrderFunc, quit chan bool) (err error) {
+	url := w.domain + ":" + strconv.Itoa(w.request_port) + w.url_streaming + "/getOrder"
 	//fmt.Println("URL:>", url)
-	u := OrderRequest{
-		User:       user,
-		Token:      token,
+	u := orderRequest{
+		User:       w.user,
+		Token:      w.token,
 		Security:   secs,
 		Tinterface: tis,
 		Type:       tys,
 		Interval:   inter,
 	}
-	reqJ := GetOrderRequest{
+	reqJ := getOrderRequest{
 		GetOrder: u,
 	}
 	reader, thiserr := streaming(reqJ, url)
@@ -851,7 +880,7 @@ func GetOrderStreaming(secs []string, tis []string, tys []string, inter int, cal
 			}
 			//fmt.Println(string(line))
 			bytes := []byte(line)
-			var cresponse GetOrderResponse
+			var cresponse getOrderResponse
 			err = json.Unmarshal(bytes, &cresponse)
 			if err != nil {
 				return err
@@ -863,25 +892,32 @@ func GetOrderStreaming(secs []string, tis []string, tys []string, inter int, cal
 	}
 }
 
-func GetOrderStreamingBegin(secs []string, tis []string, tys []string, inter int, callback CallBackOrderFunc) chan bool {
+func (w *Wrapper) GetOrderStreamingBegin(secs []string, tis []string, tys []string, inter int, callback callBackOrderFunc) chan bool {
 	quit := make(chan bool)
-	go GetOrderStreaming(secs, tis, tys, inter, callback, quit)
+	go w.GetOrderStreaming(secs, tis, tys, inter, callback, quit)
 	return quit
 }
 
-func GetOrderStreamingEnd(quit chan bool) {
+func (w *Wrapper) GetOrderStreamingEnd(quit chan bool) {
 	quit <- true
 }
 
 func polling(reqJ interface{}, url string) (bytesres []byte, err error) {
 	resp, thiserr := doRequest(reqJ, url)
 	if thiserr != nil {
+		fmt.Println("polling req: ")
+		fmt.Println(reqJ)
+		fmt.Println(thiserr)
 		err = thiserr
 		return
 	}
 	defer resp.Body.Close()
 	body, thiserr := ioutil.ReadAll(resp.Body)
 	if thiserr != nil {
+		fmt.Println("polling resp: ")
+		fmt.Println(resp)
+		fmt.Println(resp.Body)
+		fmt.Println(thiserr)
 		err = thiserr
 		return
 	}
@@ -936,4 +972,8 @@ func doRequest(reqJ interface{}, url string) (resp *http.Response, err error) {
 	}
 	resp, err = client.Do(req)
 	return
+}
+
+func (w *Wrapper) ChangeToken() () {
+	w.token="WRONG"
 }

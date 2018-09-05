@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Arthika/REST-API-Go-Applications/wrapper"
+	"github.com/adharapayments/REST-API-Go-Applications/wrapper"
 	"strconv"
 	"time"
 	"os"
@@ -45,19 +45,19 @@ func main() {
 
 	// wrapper authentication
 
-
+	var w *wrapper.Wrapper
 	if conf.Is_ssl {
-		wrapper.New(conf.Ssl_domain, conf.User, conf.Password, conf.Url_streaming, conf.Url_polling, conf.Url_challenge, conf.Url_token, conf.Ssl_authentication_port, conf.Ssl_request_port, conf.Is_ssl, conf.Ssl_cert, conf.Insecure_skip_verify)
+		w = wrapper.CreateWrapper(conf.Ssl_domain, conf.User, conf.Password, conf.Url_streaming, conf.Url_polling, conf.Url_challenge, conf.Url_token, conf.Ssl_authentication_port, conf.Ssl_request_port, conf.Is_ssl, conf.Ssl_cert, conf.Insecure_skip_verify)
 	} else {
-		wrapper.New(conf.Domain, conf.User, conf.Password, conf.Url_streaming, conf.Url_polling, conf.Url_challenge, conf.Url_token, conf.Authentication_port, conf.Request_port, conf.Is_ssl, conf.Ssl_cert, conf.Insecure_skip_verify)
+		w = wrapper.CreateWrapper(conf.Domain, conf.User, conf.Password, conf.Url_streaming, conf.Url_polling, conf.Url_challenge, conf.Url_token, conf.Authentication_port, conf.Request_port, conf.Is_ssl, conf.Ssl_cert, conf.Insecure_skip_verify)
 	}
-	err = wrapper.DoAuthentication()
+	err = w.DoAuthentication()
 	if err != nil {
 		log.Fatal("Error in wrapper authentication:", err)
 	}
 
 	// get accounts
-	accs, err := wrapper.GetAccount()
+	accs, err := w.GetAccount()
 	if err != nil {
 		log.Fatal("Error getting accounts:", err)
 	}
@@ -68,7 +68,7 @@ func main() {
 	}
 
 	// get tinterfaces
-	tis, err := wrapper.GetInterface()
+	tis, err := w.GetInterface()
 	if err != nil {
 		log.Fatal("Error getting interfaces:", err)
 	}
@@ -79,13 +79,14 @@ func main() {
 	}
 	var ti string = tis[0].Name
 	var sec string = "EUR/USD"
+	fmt.Println(ti)
 
 	secs := []string{sec}
 	secs2 := []string{"GBP/USD", "USD/JPY"}
 
 	// get prices (Polling)
 	var bidprice float64
-	prices, err := wrapper.GetPricePolling(secs, nil, wrapper.GRANULARITY_FAB, 5)
+	prices, err := w.GetPricePolling(secs, nil, wrapper.GRANULARITY_FAB, 5)
 	if err != nil {
 		log.Fatal("Error getting prices:", err)
 	}
@@ -95,7 +96,7 @@ func main() {
 		fmt.Println("Security: " + price.Security + " - TI: " + price.Tinterface + " - Price: " + strconv.FormatFloat(price.Price, 'f', price.Pips, 64) + " - Liquidity: " + strconv.Itoa(price.Liquidity) + " - Side: " + price.Side)
 		if (price.Side == wrapper.SIDE_ASK && price.Tinterface == tis[0].Name){
 			bidprice = price.Price
-			//fmt.Println(bidprice)
+			fmt.Println(bidprice)
 		}
 	}
 
@@ -109,26 +110,26 @@ func main() {
 	}
 
 	// open first price streaming
-	id1, err = wrapper.GetPriceStreamingBegin(secs, nil, wrapper.GRANULARITY_FAB, 5, conf.Interval, processPrices)
+	id1, err = w.GetPriceStreamingBegin(secs, nil, wrapper.GRANULARITY_FAB, 5, conf.Interval, processPrices)
 
 	time.Sleep(2000 * time.Millisecond)
 
 	// open second price streaming
-	id2, err = wrapper.GetPriceStreamingBegin(secs2, nil, wrapper.GRANULARITY_TOB, 1, conf.Interval, processPrices)
+	id2, err = w.GetPriceStreamingBegin(secs2, nil, wrapper.GRANULARITY_TOB, 1, conf.Interval, processPrices)
 
 	time.Sleep(2000 * time.Millisecond)
 
 	// close second price streaming
-	wrapper.GetPriceStreamingEnd(id2)
+	w.GetPriceStreamingEnd(id2)
 
 	time.Sleep(2000 * time.Millisecond)
 
 	// close first price streaming
-	wrapper.GetPriceStreamingEnd(id1)
+	w.GetPriceStreamingEnd(id1)
 
 
 	// get positions (Polling)
-	position, err := wrapper.GetPositionPolling(nil, nil, nil)
+	position, err := w.GetPositionPolling(nil, nil, nil)
 	if err != nil {
 		log.Fatal("Error getting positions:", err)
 	}
@@ -164,15 +165,15 @@ func main() {
 	}
 
 	// open position streaming
-	idPos1 := wrapper.GetPositionStreamingBegin(nil, nil, nil, conf.Interval, processPosition)
+	idPos1 := w.GetPositionStreamingBegin(nil, nil, nil, conf.Interval, processPosition)
 
 	time.Sleep(2000 * time.Millisecond)
 
 	// close position streaming
-	wrapper.GetPositionStreamingEnd(idPos1)
+	w.GetPositionStreamingEnd(idPos1)
 
 	// get orders (Polling)
-	orders, err := wrapper.GetOrderPolling(nil, nil, nil)
+	orders, err := w.GetOrderPolling(nil, nil, nil)
 	if err != nil {
 		log.Fatal("Error getting orders:", err)
 	}
@@ -192,10 +193,10 @@ func main() {
 	}
 
 	// open order streaming
-	idOrder1 := wrapper.GetOrderStreamingBegin(nil, nil, nil, conf.Interval, processOrders)
+	idOrder1 := w.GetOrderStreamingBegin(nil, nil, nil, conf.Interval, processOrders)
 
 	time.Sleep(2000 * time.Millisecond)
-
+/*
 	// create two orders (the orders appear in order streaming)
 	var order1 wrapper.Order = wrapper.Order{}
 	order1.Security = sec
@@ -215,7 +216,7 @@ func main() {
 	order2.Timeinforce = wrapper.VALIDITY_FILLORKILL
 	var setorders []wrapper.Order = []wrapper.Order{order1, order2}
 	//fmt.Println(setorders)
-	setorderresponse, err := wrapper.SetOrder(setorders)
+	setorderresponse, err := w.SetOrder(setorders)
 	if err != nil {
 		log.Fatal("Error setting orders:", err)
 	}
@@ -228,7 +229,7 @@ func main() {
 	time.Sleep(2000 * time.Millisecond)
 
 	// get pending orders (Polling), modify the first one and then cancel it (changes appear in order streaming)
-	pendingorders, err := wrapper.GetOrderPolling([]string{sec}, []string{ti}, []string{wrapper.ORDERTYPE_PENDING})
+	pendingorders, err := w.GetOrderPolling([]string{sec}, []string{ti}, []string{wrapper.ORDERTYPE_PENDING})
 	if err != nil {
 		log.Fatal("Error getting pending orders:", err)
 	}
@@ -243,7 +244,7 @@ func main() {
 		modifyorder1.Price = pendingorder.Limitprice
 		modifyorder1.Quantity = pendingorder.Quantity * 2
 		var modifyorders []wrapper.ModOrder = []wrapper.ModOrder{modifyorder1}
-		modifyorderresponse, err := wrapper.ModifyOrder(modifyorders)
+		modifyorderresponse, err := w.ModifyOrder(modifyorders)
 		if err != nil {
 			log.Fatal("Error modifying orders:", err)
 		}
@@ -257,7 +258,7 @@ func main() {
 
 		// cancel order
 		var cancelorders []string = []string{pendingorder.Fixid}
-		cancelorderresponse, err := wrapper.CancelOrder(cancelorders)
+		cancelorderresponse, err := w.CancelOrder(cancelorders)
 		if err != nil {
 			log.Fatal("Error canceling orders:", err)
 		}
@@ -267,11 +268,11 @@ func main() {
 			fmt.Println("FixId: " + cancelordertick.Fixid + " - Result: " + cancelordertick.Result);
 		}
 	}
-
+*/
 	time.Sleep(2000 * time.Millisecond)
 
 	// close order streaming
-	wrapper.GetPriceStreamingEnd(idOrder1)
+	w.GetPriceStreamingEnd(idOrder1)
 
 
 	fmt.Println("**********END**********")
